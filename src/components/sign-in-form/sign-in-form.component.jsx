@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { UserContext } from '../../contexts/user.context'
 
 import {
   creteUserDocumentFromAuth,
@@ -13,6 +14,7 @@ import './sign-in-form.styles.scss'
 const defaultFormFields = { email: '', password: '' }
 
 export default function SignInForm() {
+  const { setCurrentUser } = useContext(UserContext)
   const [formFields, setFormFields] = useState(defaultFormFields)
   const { email, password } = formFields
 
@@ -27,7 +29,9 @@ export default function SignInForm() {
     event.preventDefault()
 
     try {
-      await signInWithCredentials(email, password)
+      const { user } = await signInWithCredentials(email, password)
+
+      setCurrentUser(user)
       resetFormFields()
     } catch (error) {
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
@@ -41,6 +45,7 @@ export default function SignInForm() {
   const signInWithGoogle = async () => {
     const { user } = await signInWithGooglePopup()
     await creteUserDocumentFromAuth(user)
+    setCurrentUser(user)
   }
 
   return (
