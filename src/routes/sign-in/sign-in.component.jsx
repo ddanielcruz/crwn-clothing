@@ -1,3 +1,5 @@
+import Button from '../../components/button/button.component'
+import SignUpForm from '../../components/sign-up-form/sign-up-form.component'
 import {
   signInWithGooglePopup,
   creteUserDocumentFromAuth
@@ -5,13 +7,16 @@ import {
 
 export default function SignIn() {
   const logGoogleUser = async () => {
-    const response = await signInWithGooglePopup()
-    await creteUserDocumentFromAuth(response.user)
+    const { user } = await signInWithGooglePopup()
+    await creteUserDocumentFromAuth(user)
   }
 
   return (
     <div>
-      <button onClick={logGoogleUser}>Sign In</button>
+      <Button onClick={logGoogleUser} buttonType="google">
+        Sign In
+      </Button>
+      <SignUpForm />
     </div>
   )
 }
