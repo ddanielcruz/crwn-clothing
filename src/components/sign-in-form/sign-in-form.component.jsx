@@ -1,11 +1,6 @@
-import { useContext, useState } from 'react'
-import { UserContext } from '../../contexts/user.context'
+import { useState } from 'react'
 
-import {
-  creteUserDocumentFromAuth,
-  signInWithCredentials,
-  signInWithGooglePopup
-} from '../../utils/firebase/firebase.utils'
+import { signInWithCredentials, signInWithGooglePopup } from '../../utils/firebase/firebase.utils'
 import Button from '../button/button.component'
 import FormInput from '../form-input/form-input.component'
 
@@ -14,7 +9,6 @@ import './sign-in-form.styles.scss'
 const defaultFormFields = { email: '', password: '' }
 
 export default function SignInForm() {
-  const { setCurrentUser } = useContext(UserContext)
   const [formFields, setFormFields] = useState(defaultFormFields)
   const { email, password } = formFields
 
@@ -29,9 +23,7 @@ export default function SignInForm() {
     event.preventDefault()
 
     try {
-      const { user } = await signInWithCredentials(email, password)
-
-      setCurrentUser(user)
+      await signInWithCredentials(email, password)
       resetFormFields()
     } catch (error) {
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
@@ -40,12 +32,6 @@ export default function SignInForm() {
 
       console.log(`Error authenticating user: ${error}`)
     }
-  }
-
-  const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup()
-    await creteUserDocumentFromAuth(user)
-    setCurrentUser(user)
   }
 
   return (
@@ -71,7 +57,7 @@ export default function SignInForm() {
         />
         <div className="buttons-container">
           <Button type="submit">Sign In</Button>
-          <Button type="button" onClick={signInWithGoogle} buttonType="google">
+          <Button type="button" onClick={signInWithGooglePopup} buttonType="google">
             Sign In With Google
           </Button>
         </div>
