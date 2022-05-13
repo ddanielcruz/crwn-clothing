@@ -8,7 +8,16 @@ import {
   signOut,
   onAuthStateChanged
 } from 'firebase/auth'
-import { getFirestore, doc, getDoc, setDoc, collection, writeBatch } from 'firebase/firestore'
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs
+} from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -76,4 +85,15 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 
   await batch.commit()
   console.log('Batch is completed')
+}
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories')
+  const q = query(collectionRef)
+  const querySnapshot = await getDocs(q)
+
+  return querySnapshot.docs.reduce((map, docSnapshot) => {
+    const { title, items } = docSnapshot.data()
+    return { ...map, [title.toLowerCase()]: items }
+  }, {})
 }
