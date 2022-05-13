@@ -8,7 +8,7 @@ import {
   signOut,
   onAuthStateChanged
 } from 'firebase/auth'
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -34,6 +34,16 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider)
 export const signInWithCredentials = (email, password) =>
   signInWithEmailAndPassword(auth, email, password)
 
+export const signOutUser = () => signOut(auth)
+
+export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback)
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (email && password) {
+    return await createUserWithEmailAndPassword(auth, email, password)
+  }
+}
+
 // Setup database
 export const db = getFirestore()
 
@@ -55,12 +65,15 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
   return userDocRef
 }
 
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
-  if (email && password) {
-    return await createUserWithEmailAndPassword(auth, email, password)
-  }
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+  const collectionRef = collection(db, collectionKey)
+  const batch = writeBatch(db)
+
+  objectsToAdd.forEach((obj) => {
+    const docRef = doc(collectionRef, obj.title.toLowerCase())
+    batch.set(docRef, obj)
+  })
+
+  await batch.commit()
+  console.log('Batch is completed')
 }
-
-export const signOutUser = () => signOut(auth)
-
-export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback)
