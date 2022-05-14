@@ -13,3 +13,8 @@ export const selectCategoriesMap = createSelector([selectCategories], (categorie
     return { ...map, [title.toLowerCase()]: items }
   }, {})
 )
+
+export const selectCategoriesIsLoading = createSelector(
+  [selectCategoriesReducer],
+  (categoriesSlice) => categoriesSlice.isLoading
+)
