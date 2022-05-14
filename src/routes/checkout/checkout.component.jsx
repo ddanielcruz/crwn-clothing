@@ -28,7 +28,7 @@ export default function Checkout() {
         </HeaderBlock>
       </CheckoutHeader>
       {cartItems.map((cartItem) => (
-        <CheckoutItem key={cartItem.id} cartItem={cartItem} />
+        <CheckoutItem key={cartItem.id} item={cartItem} />
       ))}
       <Total>Total: ${cartTotal}</Total>
     </CheckoutContainer>
