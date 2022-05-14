@@ -53,6 +53,19 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
   }
 }
 
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe()
+        resolve(userAuth)
+      },
+      reject
+    )
+  })
+}
+
 // Setup database
 export const db = getFirestore()
 
@@ -71,7 +84,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
     }
   }
 
-  return userDocRef
+  return userSnapshot
 }
 
 export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
