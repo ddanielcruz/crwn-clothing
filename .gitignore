@@ -25,3 +25,6 @@ yarn-error.log*
 # env variables
 .env*
 !.env.example
+
+# netlify
+.netlify
