@@ -1,13 +1,19 @@
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
+import { FC } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { addItemToCart } from '../../store/cart/cart.actions'
 import { selectCartItems } from '../../store/cart/cart.selector'
+import { addItemToCart } from '../../store/cart/cart.actions'
+import { CategoryItem } from '../../store/categories/categories.types'
+
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component'
 
-import { Footer, Name, Price, ProductCartContainer } from './product-card.styles'
+import { ProductCartContainer, Footer, Name, Price } from './product-card.styles'
 
-export default function ProductCard({ product }) {
+type ProductCardProps = {
+  product: CategoryItem
+}
+
+const ProductCard: FC<ProductCardProps> = ({ product }) => {
   const { name, price, imageUrl } = product
   const dispatch = useDispatch()
   const cartItems = useSelector(selectCartItems)
@@ -19,7 +25,7 @@ export default function ProductCard({ product }) {
       <img src={imageUrl} alt={`${name}`} />
       <Footer>
         <Name>{name}</Name>
-        <Price>${price}</Price>
+        <Price>{price}</Price>
       </Footer>
       <Button buttonType={BUTTON_TYPE_CLASSES.inverted} onClick={addProductToCart}>
         Add to card
@@ -27,3 +33,5 @@ export default function ProductCard({ product }) {
     </ProductCartContainer>
   )
 }
+
+export default ProductCard

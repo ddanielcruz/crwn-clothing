@@ -1,22 +1,28 @@
-import { useDispatch } from 'react-redux'
-import { useSelector } from 'react-redux'
+import { FC } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
-import { addItemToCart, clearItemFromCart, removeItemFromCart } from '../../store/cart/cart.actions'
 import { selectCartItems } from '../../store/cart/cart.selector'
+import { addItemToCart, clearItemFromCart, removeItemFromCart } from '../../store/cart/cart.actions'
+
 import {
-  Arrow,
-  BaseSpan,
   CheckoutItemContainer,
   ImageContainer,
+  BaseSpan,
   Quantity,
-  RemoveButton,
-  Value
+  Arrow,
+  Value,
+  RemoveButton
 } from './checkout-item.styles'
+import { CartItem } from '../../store/cart/cart.types'
 
-export default function CheckoutItem({ item }) {
-  const dispatch = useDispatch()
-  const cartItems = useSelector(selectCartItems)
+type CheckoutItemProps = {
+  item: CartItem
+}
+
+const CheckoutItem: FC<CheckoutItemProps> = ({ item }) => {
   const { name, imageUrl, price, quantity } = item
+  const cartItems = useSelector(selectCartItems)
+  const dispatch = useDispatch()
 
   const clearItemHandler = () => dispatch(clearItemFromCart(cartItems, item))
   const addItemHandler = () => dispatch(addItemToCart(cartItems, item))
@@ -38,3 +44,5 @@ export default function CheckoutItem({ item }) {
     </CheckoutItemContainer>
   )
 }
+
+export default CheckoutItem

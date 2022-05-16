@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { emailSignInStart, googleSignInStart } from '../../store/user/user.action'
@@ -16,22 +16,18 @@ export default function SignInForm() {
 
   const resetFormFields = () => setFormFields(defaultFormFields)
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setFormFields({ ...formFields, [name]: value })
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     try {
       dispatch(emailSignInStart(email, password))
       resetFormFields()
     } catch (error) {
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        return alert('Invalid credentials!')
-      }
-
       console.log(`Error authenticating user: ${error}`)
     }
   }

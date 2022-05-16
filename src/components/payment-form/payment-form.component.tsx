@@ -1,7 +1,7 @@
 import { useStripe } from '@stripe/react-stripe-js'
 import { useElements } from '@stripe/react-stripe-js'
 import { CardElement } from '@stripe/react-stripe-js'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { selectCartTotal } from '../../store/cart/cart.selector'
@@ -12,11 +12,11 @@ import { PaymentFormContainer, FormContainer, PaymentButton } from './payment-fo
 export default function PaymentForm() {
   const stripe = useStripe()
   const elements = useElements()
-  const currentUser = useSelector(selectCurrentUser) || {}
+  const currentUser = useSelector(selectCurrentUser)
   const cartTotal = useSelector(selectCartTotal)
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
 
-  const handlePayment = async (event) => {
+  const handlePayment = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (!stripe || !elements) {
@@ -25,6 +25,12 @@ export default function PaymentForm() {
 
     try {
       setIsProcessingPayment(true)
+
+      const cardDetails = elements.getElement(CardElement)
+      if (!cardDetails) {
+        return
+      }
+
       const response = await fetch('/.netlify/functions/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,10 +40,10 @@ export default function PaymentForm() {
       const clientSecret = response.paymentIntent.client_secret
       const paymentResult = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          card: elements.getElement(CardElement),
+          card: cardDetails,
           billing_details: {
-            name: currentUser.displayName || 'Guest',
-            email: currentUser.email
+            name: currentUser?.displayName || 'Guest',
+            email: currentUser?.email
           }
         }
       })
